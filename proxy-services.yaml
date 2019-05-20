@@ -20,6 +20,7 @@
       with_items:
           - { regexp: ":8081/userportal", replace: "/userportal" }
           - { regexp: ":8081/bright-view", replace: "/bright-view" }
+          - { regexp: '(http)(://.*:10080)', replace: 'https\2' }
           - { regexp: ":10080/", replace: "/openstack" }
 
     - name: Restart service httpd, in all cases
