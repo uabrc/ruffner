@@ -78,3 +78,6 @@
 
     - name: add novnc proxy to cluster config
       shell: /cm/local/apps/cmd/bin/cmsh -c "configurationoverlay; use openstackhypervisors; customizations; add /etc/nova/nova.conf; entries; add vnc novncproxy_base_url=https://ruffner.rc.uab.edu:6081/vnc_auto.html; commit"
+
+    - name: restart opstack-dashboard
+      shell: /cm/local/apps/cmd/bin/cmsh -c "device use n01; services; restart openstack-dashboard"
