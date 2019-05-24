@@ -21,7 +21,15 @@ the ProxyPass config.  Because the userportal and bright-view are exposed
 via http and https by default via cmd the ProxyPass works seemlessly against
 the ssl-based backend.
 
-The same model is adapted for openstack proxying.
+The same model is adapted for openstack proxying.  In order for this model to
+work for openstack from bcm, the openstack service must first be hosted as
+an SSL service via haproxy so that the ProxyPass rules in Apache maintain the
+https protocol restriction.  In addition, the OpenStack dashboard django app
+must be updated to be served under the /openstack/ url prefix.  This involves
+changes to [nginx config](http://nginx.org/en/docs/http/ngx_http_core_module.html#alias)
+ that serves the openstack-dashboard app so nginx recognizes the path prefix and builds correct file paths for static content, the [local_settings for the openstack_dashboard](https://docs.djangoproject.com/en/2.2/topics/settings/#django-settings) so django returns prefixed urls,  and the [urlpatterns defined as part of django app dispatcher config](https://docs.djangoproject.com/en/1.11/topics/http/urls/) so that the app recognizes the new path prefix.
+
+
 
 ## Create a hosts file for the Bright cluster
 It needs an entry for the master and the controllers.  Something like this should do.
@@ -29,6 +37,15 @@ Note that the ansible rules need to run as root.  Typically admins have sudo
 on the master but may not have sudo on the compute nodes.  One work around is
 to put the user running ansible's ssh public key in the root account of the
 controller.
+
+A host file like the following can work:
+```
+[master]
+master.example.org
+
+[controller]
+c1 ansible_host=master.example.org+controller_host ansible_user=root
+```
 
 ## Commands to run to enable proxy config
 
