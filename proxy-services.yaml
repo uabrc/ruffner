@@ -76,8 +76,14 @@
     - name: restart haproxy
       shell: /cm/local/apps/cmd/bin/cmsh -c "device use master; services; restart haproxy"
 
+    - name: check for ssl novnc proxy config
+      shell: /cm/local/apps/cmd/bin/cmsh -c "configurationoverlay; use openstackhypervisors; customizations; use /etc/nova/nova.conf; entries; use [vnc]\ novncproxy_base_url; get value"
+      ignore_errors: yes
+      register: novnc_proxy_value
+
     - name: add novnc proxy to cluster config
       shell: /cm/local/apps/cmd/bin/cmsh -c "configurationoverlay; use openstackhypervisors; customizations; add /etc/nova/nova.conf; entries; add vnc novncproxy_base_url=https://ruffner.rc.uab.edu:6081/vnc_auto.html; commit"
+      when: novnc_proxy_value.rc == 1
 
     - name: restart opstack-dashboard
       shell: /cm/local/apps/cmd/bin/cmsh -c "device use n01; services; restart openstack-dashboard"
