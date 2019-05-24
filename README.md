@@ -22,3 +22,23 @@ via http and https by default via cmd the ProxyPass works seemlessly against
 the ssl-based backend.
 
 The same model is adapted for openstack proxying.
+
+## Create a hosts file for the Bright cluster
+It needs an entry for the master and the controllers.  Something like this should do.
+Note that the ansible rules need to run as root.  Typically admins have sudo
+on the master but may not have sudo on the compute nodes.  One work around is
+to put the user running ansible's ssh public key in the root account of the
+controller.
+
+## Commands to run to enable proxy config
+
+The first step is to update the openstack dashboard on the controllers
+```
+ansible-playbook -i hosts horizon_newroot.yaml
+```
+
+The next step is to update the http hosting configuration on the master to
+reach the updated dashboard configuration.
+```
+ansible-playbook -i hosts proxy-services.yaml -K -b
+```
