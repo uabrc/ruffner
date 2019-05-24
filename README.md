@@ -47,6 +47,17 @@ master.example.org
 c1 ansible_host=master.example.org+controller_host ansible_user=root
 ```
 
+## Define an SSL certificate bundle
+
+Serving content via SSL requires a cert bundle for haproxy
+and other services.  You can build a cert bundle with your host key and any
+intermidiate certificates up to the root CA.  For an InCommon CA key this file
+can be created in the root users directory of the master node.
+```
+cat host.key host.crt InCommon_RSA_Server_CA.pem USERTrust_RSA_Certification_Authority.pem AddTrust_External_CA_Root.pem > cert-bundle.pem
+```
+The ansible tasks will refernence this at the path `/root/cert-bundle.pem`.
+
 ## Commands to run to enable proxy config
 
 The first step is to update the openstack dashboard on the controllers
