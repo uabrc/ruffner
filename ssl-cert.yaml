@@ -1,0 +1,39 @@
+- hosts: master
+
+  tasks:
+    - name: copy private key to pki dir
+      copy:
+        src: /root/ruffner.key
+        dest: /etc/pki/tls/private/ruffner.key
+        remote_src: yes
+        backup: yes
+
+    - name: copy certificate to pki dir
+      copy:
+        src: /root/ruffner.crt
+        dest: /etc/pki/tls/certs/ruffner.crt
+        remote_src: yes
+        backup: yes
+
+    - name: copy certificate chain to pki dir
+      copy:
+        src: /root/ruffner-cert-chain.pem
+        dest: /etc/pki/tls/certs/ruffner-cert-chain.pem
+        remote_src: yes
+        backup: yes
+
+    - name: fix apache ssl cert paths
+      replace:
+         path: /etc/httpd/conf.d/ssl.conf
+         regexp: '{{ item.regexp }}'
+         replace: '{{ item.replace }}'
+         backup: yes
+      with_items:
+          - { regexp: "^(SSLCertificateFile /etc/pki/tls/certs)/localhost.crt", replace: '\1/ruffner.crt' }
+          - { regexp: "^(SSLCertificateKeyFile /etc/pki/tls/private)/localhost.key", replace: '\1/ruffner.key' }
+          - { regexp: '^#(SSLCertificateChainFile /etc/pki/tls/certs)/server-chain.crt', replace: '\1/ruffner-cert-chain.pem' }
+
+    - name: Restart service httpd, in all cases
+      service:
+        name: httpd
+        state: restarted
