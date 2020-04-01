@@ -36,4 +36,5 @@
     # https://ask.openstack.org/en/question/52157/horizon-change-root-url/
     - name: update the offline manifest for template compression
       shell: python manage.py compress --force
+      args:
         chdir:  /usr/share/openstack-dashboard
