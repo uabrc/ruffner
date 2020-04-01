@@ -1,0 +1,10 @@
+- hosts: controller
+
+  tasks:
+    # fixes bug https://bugs.launchpad.net/horizon/+bug/1780164
+    - name: patch dashboard file descriptor leak
+      patch:
+        src: session.py.patch 
+        dest: /usr/lib/python2.7/site-packages/keystoneauth1/session.py
+        remote_src: no
+        backup: yes
