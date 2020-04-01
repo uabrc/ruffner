@@ -38,3 +38,19 @@
       shell: python manage.py compress --force
       args:
         chdir:  /usr/share/openstack-dashboard
+
+    - name: fix permissions on /etc/openstack-dashboard for nginx
+      file:
+        path: /etc/openstack-dashboard
+        mode: u=rwx,g=rx,o=x
+
+    - name: fix permissions on /etc/openstack-dashboard _policy files for nginx
+      file:
+        path: /etc/openstack-dashboard/{{ item }}_policy.json
+        mode: u=rw,g=r,o=r
+      loop:
+        - cinder
+        - glance
+        - keystone
+        - neutron
+        - nova
