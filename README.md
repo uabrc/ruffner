@@ -47,6 +47,25 @@ master.example.org
 c1 ansible_host=master.example.org+controller_host ansible_user=root
 ```
 
+In the event that you want to run the playbook in a `chroot`, for example, apply to the OpenStack controller node image (assuming that the repo has been staged to `/cm/images/<image>/root/uabrc/ruffner`):
+
+```shell
+$ sudo mkdir /cm/images/<image>/dev/shm
+$ sudo mount --bind /dev/shm /cm/images/<image>/dev/shm
+$ sudo chroot /cm/images/<image>
+# cd /root/uabrc/ruffner
+# cat << EOF > hosts
+[controller]
+localhost ansible_connection=local
+EOF
+
+# ansible-playbook  -i hosts -l "localhost,"  horizon-newroot.yaml
+
+# exit
+$ sudo umount /cm/images/<image>/dev/shm
+$ sudo rmdir /cm/images/<image>/dev/shm
+```
+
 ## Define an SSL certificate bundle
 
 Serving content via SSL requires a cert bundle for haproxy
