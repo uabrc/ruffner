@@ -42,12 +42,12 @@
     - name: fix permissions on /etc/openstack-dashboard for nginx
       file:
         path: /etc/openstack-dashboard
-        mode: u=rwx,g=rx,o=x
+        group: nginx
 
     - name: fix permissions on /etc/openstack-dashboard _policy files for nginx
       file:
         path: /etc/openstack-dashboard/{{ item }}_policy.json
-        mode: u=rw,g=r,o=r
+        group: nginx
       loop:
         - cinder
         - glance
