@@ -81,7 +81,7 @@ The ansible tasks will refernence this at the path `/root/cert-bundle.pem`.
 
 The first step is to update the openstack dashboard on the controllers
 ```
-ansible-playbook -i hosts horizon_newroot.yaml
+ansible-playbook -i hosts horizon-newroot.yaml
 ```
 
 The next step is to update the http hosting configuration on the master to
