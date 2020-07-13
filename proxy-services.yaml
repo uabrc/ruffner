@@ -67,11 +67,15 @@
             bind 0.0.0.0:10081 ssl crt /etc/haproxy/cert-bundle.pem
             reqadd X-Forwarded-Proto:\ https
             server auto-n01::192.168.17.1:80 192.168.17.1:80 check
+            server auto-n02::192.168.17.2:80 192.168.17.2:80 check
+            server auto-n03::192.168.17.3:80 192.168.17.3:80 check
 
           listen VNC-https
             mode http
             bind 0.0.0.0:6081 ssl crt /etc/haproxy/cert-bundle.pem
             server auto-n01::192.168.17.1:16080 192.168.17.1:16080 check
+            server auto-n02::192.168.17.2:16080 192.168.17.2:16080 check
+            server auto-n03::192.168.17.3:16080 192.168.17.3:16080 check
 
     - name: restart haproxy
       shell: /cm/local/apps/cmd/bin/cmsh -c "device use master; services; restart haproxy"
@@ -86,4 +90,8 @@
       when: novnc_proxy_value.rc == 1
 
     - name: restart opstack-dashboard
-      shell: /cm/local/apps/cmd/bin/cmsh -c "device use n01; services; restart openstack-dashboard"
+      shell: /cm/local/apps/cmd/bin/cmsh -c "device use {{ item }}; services; restart openstack-dashboard"
+      loop:
+        - n01
+        - n02
+        - n03
