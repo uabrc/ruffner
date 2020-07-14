@@ -1,0 +1,33 @@
+- hosts: master
+
+# when slurm and nova run on the same nodes their cgroup config 
+# will conflict.  Remove the conflict in system.conf.
+  tasks:
+    - name: create a nova-compute image to support special settings
+      shell: /cm/local/apps/cmd/bin/cmsh -c 'softwareimage; clone default-image nova-compute; commit'
+
+    - name: assocate compute nodes with nova-compute image
+      shell: /cm/local/apps/cmd/bin/cmsh -c "device use {{ items }}; set category nova-compute; commit;"
+      loop:
+        - n04
+        - n05
+        - n06
+        - n07
+        - n08
+        - n09
+        - n10
+        - n11
+        - n12
+
+    - name: fix cgroup config to separate libvirtd needs from slurmclient
+      replace:
+         path: /cm/images/nova-compute/etc/systemd/system.conf 
+         regexp: '{{ item.regexp }}'
+         replace: '{{ item.replace }}'
+         backup: yes
+      with_items:
+          - { regexp: "^JoinControllers = blkio,cpuacct,memory,freezer", replace: "#JoinControllers = blkio,cpuacct,memory,freezer" }
+
+    - name: reboot nova-compute nodes to apply cgroup changes
+      shell: /cm/local/apps/cmd/bin/cmsh -c "device; foreach -g nova-compute (get hostname;)"
+
