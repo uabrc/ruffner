@@ -89,3 +89,25 @@ reach the updated dashboard configuration.
 ```
 ansible-playbook -i hosts proxy-services.yaml -K -b
 ```
+
+## Set publicURL to a FQDN
+
+If the publicURL is an IP it can be impossible to reach the service from multiple networks.
+Setting it to a FQDN allows name resolution to determine the correct IP.
+
+Update the image and running cluster nodes the the desired FQDN.
+```
+ansible-playbook -i hosts add-publicurl-build.yaml
+ansible-playbook -i hosts fix-publicurl-ops.yaml
+```
+
+
+Update the openstack configuration. Make sure you have admin privileges
+```
+openstack endpoint list --interface public -f value -c ID -c URL | sed -e 's/192\.168\.16\.10/my.FQDN/'
+```
+
+Then simply replace the urls with a loop of commands like:
+```
+openstack endpoint set --url <endpoint_url> <endpoint_id>
+```
