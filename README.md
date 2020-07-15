@@ -89,3 +89,21 @@ reach the updated dashboard configuration.
 ```
 ansible-playbook -i hosts proxy-services.yaml -K -b
 ```
+
+## New accounts
+
+Once the cluster is created you can create new accounts using the commandline tools and a CSV file.
+The file format is username,email,password, eg. users.csv.
+
+Make sure to have the openstack cli set up with an admin account on openstack. Then run the following:
+```
+for rec in `cat  users.csv`
+do
+  user=`echo $rec | cut -d, -f1`
+  email=`echo $rec | cut -d, -f2`
+  pass=`echo $rec | cut -d, -f3`
+  echo $user
+  ./os-create-user $user $email $pass
+done
+```
+

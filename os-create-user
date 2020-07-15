@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# create basic openstack accounts with a self-named project
+# user is member of project
+
+user=$1
+email=$2
+passwd=$3
+
+openstack project create $user
+openstack user create --project $user --email $email --password $passwd --enable $user
+openstack role add --project $user --user $user member
