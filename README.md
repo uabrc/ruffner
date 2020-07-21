@@ -50,10 +50,14 @@ c1 ansible_host=master.example.org+controller_host ansible_user=root
 In the event that you want to run the playbook in a `chroot`, for example, apply to the OpenStack controller node image (assuming that the repo has been staged to `/cm/images/<image>/root/uabrc/ruffner`):
 
 ```shell
-$ sudo mkdir /cm/images/<image>/dev/shm
+$ sudo mkdir /cm/images/<image>/dev/shm /root/uabrc
 $ sudo mount --bind /dev/shm /cm/images/<image>/dev/shm
 $ sudo chroot /cm/images/<image>
-# cd /root/uabrc/ruffner
+
+# cd /root/uabrc
+# git clone https://github.com/uabrc/ruffner.git
+# cd ruffner
+
 # cat << EOF > hosts
 [controller]
 localhost ansible_connection=local
