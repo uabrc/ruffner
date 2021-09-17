@@ -6,7 +6,9 @@
 user=$1
 email=$2
 passwd=$3
+name=$4
+domain=$5
 
-openstack project create $user
-openstack user create --project $user --email $email --password $passwd --enable $user
-openstack role add --project $user --user $user member
+openstack project create $user --domain=$domain
+openstack user create --project $user --email $email --password $passwd --enable $user --domain=$domain --description="$name"
+openstack role add --project $user --user $user member --user-domain=$domain
